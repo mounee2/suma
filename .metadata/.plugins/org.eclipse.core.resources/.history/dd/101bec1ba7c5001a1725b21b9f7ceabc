@@ -1,0 +1,205 @@
+package home.spring;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.virtusa.buyit.dao.CustomerDAO;
+import com.virtusa.buyit.dao.OrderDAO;
+import com.virtusa.buyit.dao.ProductDAO;
+import com.virtusa.buyit.dto.Customer;
+import com.virtusa.buyit.dto.Order;
+import com.virtusa.buyit.dto.Product;
+import com.virtusa.buyit.exception.BuyitException;
+
+@Controller
+public class ControlMain {
+
+        @RequestMapping("/test")
+		private String doGet(HttpServletRequest request, HttpServletResponse response)
+				throws ServletException, IOException {
+			/*String action = request.getParameter("action");
+			if (action.equals("get_products")) {
+				getProducts(request, response);
+			}
+
+			if (action.equals("add_product_form")) {
+				getProducts(request, response);
+			}*/
+			return "login";
+		}
+        
+		protected void doPost(HttpServletRequest request, HttpServletResponse response)
+				throws ServletException, IOException {
+			// TODO Auto-generated method stub
+
+			String action = request.getParameter("action");
+			if (null != action) {
+				if (action.equals("register_customer")) {
+					addCustomer(request, response);
+				} else if (action.equals("login")) {
+
+					login(request, response);
+				} else if (action.equals("add_products")) {
+
+					addProduct(request, response);
+				} else if (action.equals("place_order")) {
+
+					placeOrder(request, response);
+				}
+
+			}
+
+		}
+
+		private void addCustomer(HttpServletRequest request, HttpServletResponse response)
+				throws IOException, ServletException {
+
+			String name = request.getParameter("Name");
+			String userName = request.getParameter("UserName");
+			String password = request.getParameter("Password");
+			String gender = request.getParameter("Gender");
+			int mobileNumber = Integer.parseInt(request.getParameter("MobileNumber"));
+			String email = request.getParameter("Email");
+			String address = request.getParameter("Address");
+			String city = request.getParameter("City");
+			String state = request.getParameter("State");
+			int postalCode = Integer.parseInt(request.getParameter("PostalCode"));
+			Customer customer = new Customer(name, address, city, state, postalCode, userName, password, email,
+					mobileNumber, gender);
+			CustomerDAO customerDAO = new CustomerDAO();
+			try {
+				customer = customerDAO.insert(customer);
+				request.setAttribute("customer", customer);
+			} catch (BuyitException e) {
+
+			}
+
+			request.getRequestDispatcher("registerCustomer.jsp").forward(request, response);
+		}
+
+		private void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+			int customerId = Integer.parseInt(request.getParameter("userName"));
+			String password = request.getParameter("password");
+			Customer customer = null;
+			CustomerDAO cd = new CustomerDAO();
+			//Product products = null;
+			try {
+				customer = cd.get(customerId);
+				if (null != customer) {
+					if (customer.getPassword().equals(password)) {
+
+						HttpSession session = request.getSession();
+						session.setAttribute("customerID", customerId);
+						getProducts(request, response);
+						
+
+						// store products in request scope
+
+					} else {
+						request.setAttribute("errorMessage", "Invalid password");
+						request.getRequestDispatcher("/login.jsp").forward(request, response);
+					}
+				} else {
+					request.setAttribute("errorMessage", "Invalid username");
+					request.getRequestDispatcher("/login.jsp").forward(request, response);
+				}
+			} catch (BuyitException e) {
+				request.setAttribute("errorMessage", "Invalid username or password");
+				request.getRequestDispatcher("/login.jsp").forward(request, response);
+			}
+
+		}
+
+		private void getProducts(HttpServletRequest request, HttpServletResponse response)
+				throws ServletException, IOException {
+
+			ProductDAO productdao = new ProductDAO();
+			ArrayList<Product> products = null;
+			try {
+				products = productdao.get();
+			} catch (BuyitException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			request.setAttribute("products", products);
+			request.getRequestDispatcher("userHome.jsp").forward(request, response);
+		}
+
+		private void addProduct(HttpServletRequest request, HttpServletResponse response)
+				throws IOException, ServletException {
+
+			String productDescription = request.getParameter("productDescription");
+			String productFinish = request.getParameter("productFinish");
+			double standardPrice = Double.parseDouble(request.getParameter("standardPrice"));
+
+			Product product = new Product(productDescription, productFinish, standardPrice);
+			ProductDAO productdao = new ProductDAO();
+			Product productAdded = null;
+
+			try {
+				productAdded = productdao.insert(product);
+				if (null != productAdded) {
+					request.setAttribute("productAdded", "product added succesfully");
+					getProducts(request, response);
+				}
+
+			} catch (BuyitException e) {
+				// TODO Auto-generated catch block
+			}
+		}
+
+		private void placeOrder(HttpServletRequest request, HttpServletResponse response)
+				throws ServletException, IOException {
+			String[] products = request.getParameterValues("products");
+			
+			int customerId = (Integer)request.getSession().getAttribute("customerID");
+			
+			List<Product>  selectedProductsList = new ArrayList<>();
+			
+			for (int i = 0; i < products.length; i++) {
+				
+				int productId = Integer.parseInt(products[i]);
+				int quantity = Integer.parseInt(request.getParameter(products[i]));
+				Product product;
+				try {
+					product = new ProductDAO().get(productId);
+					product.setQuantity(quantity);
+					selectedProductsList.add(product);
+				} catch (BuyitException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				
+				
+			}
+			
+			Order order = new Order();
+			try {
+				order.setCustomer(new CustomerDAO().get(customerId));
+				order.setOrderDate(new Date());
+				order.setOrderedProductsList(selectedProductsList);
+				OrderDAO orderDAO = new OrderDAO();
+			int orderID = 	orderDAO.insert(order);
+			//request.setAttribute("OrderID", orderID);
+				//request.getRequestDispatcher("Output.jsp").forward(request,response);
+			response.getWriter().println(orderID);
+				
+			} catch (BuyitException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+
+	}
+

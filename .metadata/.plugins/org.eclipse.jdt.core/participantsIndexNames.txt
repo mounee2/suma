@@ -1,0 +1,9 @@
+INDEX VERSION 1.131
+C:\Users\user\eclipse-workspace\ka\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\1571924959.index
+\HackerPoll\src
+C:\Users\user\eclipse-workspace\ka\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\2230776107.index
+\BuyitSpring\src
+C:\Users\user\eclipse-workspace\ka\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\1893345186.index
+\Buyit (1)\src
+C:\Users\user\eclipse-workspace\ka\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\1765182987.index
+\home.spring\src

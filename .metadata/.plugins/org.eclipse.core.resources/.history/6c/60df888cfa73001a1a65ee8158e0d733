@@ -1,0 +1,10 @@
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+public class Sample1 {
+	public static void main(String args[])
+	{
+		Map<List<String>, Map<List<String>,Map<String,String>>> services = new HashMap<List<String>, Map<List<String>,Map<String,String>>>();
+	}
+
+}

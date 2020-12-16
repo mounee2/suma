@@ -1,0 +1,8 @@
+import java.util.Collections;
+public class Sample1 {
+	public static void main(String args[])
+	{
+		Map<List<String>, Map<List<String>,Map<String,Integer>>> services = new HashMap<>();
+	}
+
+}

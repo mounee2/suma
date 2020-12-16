@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+   http://www.springframework.org/schema/context
+   http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+   <context:component-scan
+		base-package="home.spring" />
+	<context:annotation-config />
+    <bean id="db"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName"
+			value="com.mysql.cj.jdbc.Driver"></property>
+		<property name="url"
+			value="jdbc:mysql://localhost:3307/ecommerce"></property>
+		<property name="username" value="root"></property>
+		<property name="password" value="Mouneesh@2"></property>
+	</bean>
+	<bean id="jdbcconnect" class="com.virtusa.buyit.util.DBUtility">
+	<property name="ds" ref="db"></property>
+	</bean>
+	<bean id="cd" class="com.virtusa.buyit.dao.CustomerDAO"/>
+	<bean id="pd" class="com.virtusa.buyit.dao.ProductDAO"/>
+	<bean id="od" class="com.virtusa.buyit.dao.OrderDAO" />
+
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/pages/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+</beans>

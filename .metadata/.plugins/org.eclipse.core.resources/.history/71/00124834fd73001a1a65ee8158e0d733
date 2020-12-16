@@ -1,0 +1,20 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+public class Sample1 {
+	public static void main(String args[])
+	{
+		Map<List<String>, Map<List<String>,Map<String,Integer>>> services = new HashMap<List<String>, Map<List<String>,Map<String,Integer>>>();
+		public void add()
+		{
+			Map<String,Integer> inner2map = new HashMap<String,Integer>();
+			inner2map.put("value",215);
+			List<Map<String,Integer>> innerList=new ArrayList<Map<String,Integer>>();
+			innerList.add(inner2map);
+			Map<List<String>,Map<String,Integer>> inner1map = new HashMap<List<String>,Map<String,Integer>>();
+			inner1map.put(innerList,inner2map);
+		}
+	}
+
+}
